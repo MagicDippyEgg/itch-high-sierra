@@ -35,7 +35,26 @@ export class SelfPackage implements PackageLike {
 
   async upgrade(opts: UpgradeOpts) {
     const logger = this.makeLogger(opts.logger);
-    logger.info("Self-update is completely disabled for this custom fork.");
+
+    try {
+      await itchSetupLock.with(logger, "check for self-update", async () => {
+        const { store } = this;
+        const opts: RunItchSetupOpts = {
+          logger,
+          args: ["--upgrade"],
+          onMessage: (msg: ISM) => {
+            this.onMessage(logger, msg);
+          },
+        };
+
+        this.stage("assess");
+        await runItchSetup(store, opts);
+      });
+    } finally {
+      if (this.store.getState().broth.packages[this.name].stage === "assess") {
+        this.stage("idle");
+      }
+    }
   }
 
   private onMessage(logger: Logger, msg: ISM) {
