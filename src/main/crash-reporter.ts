@@ -112,21 +112,21 @@ async function handle(type: ErrorType, e: Error) {
     return;
   }
 
-  const store = require("main/store").default;
-  const i18n = store.getState().i18n;
+  const store = require("main/store")?.default;
+  const i18n = store ? store.getState()?.i18n : undefined;
 
   const buttons = [
-    t(i18n, [
+    t(i18n || {}, [
       "prompt.crash_reporter.report_issue",
       { defaultValue: "Report issue" },
     ]),
-    t(i18n, [
+    t(i18n || {}, [
       "prompt.crash_reporter.open_crash_log",
       {
         defaultValue: "Open crash log",
       },
     ]),
-    t(i18n, ["prompt.action.close", { defaultValue: "Close" }]),
+    t(i18n || {}, ["prompt.action.close", { defaultValue: "Close" }]),
   ];
   if (env.development) {
     buttons.push("Ignore and continue");
@@ -134,13 +134,13 @@ async function handle(type: ErrorType, e: Error) {
   let dialogOpts = {
     type: "error" as "error", // woo typescript is crazy stuff, friendos
     buttons,
-    message: t(i18n, [
+    message: t(i18n || {}, [
       "prompt.crash_reporter.message",
       {
         defaultValue: "The application has crashed",
       },
     ]),
-    detail: t(i18n, [
+    detail: t(i18n || {}, [
       "prompt.crash_reporter.detail",
       {
         defaultValue: `A crash log was written to ${crashFile}`,
