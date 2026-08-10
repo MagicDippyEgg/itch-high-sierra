@@ -490,6 +490,16 @@ export class Package implements PackageLike {
     const { sanityCheck } = formula;
     const versionPrefix = this.getVersionPrefix(v);
 
+    if (process.platform === "darwin") {
+      try {
+        const { execSync } = require("child_process");
+        logger.info(`De-quarantining files in ${versionPrefix}...`);
+        execSync(`xattr -r -d com.apple.quarantine "${versionPrefix}" 2>/dev/null || true`);
+      } catch (e) {
+        logger.warn(`Failed to de-quarantine ${versionPrefix}: ${getErrorMessage(e)}`);
+      }
+    }
+
     if (!(await this.isBinaryNativeArch(logger, versionPrefix))) {
       return false;
     }
