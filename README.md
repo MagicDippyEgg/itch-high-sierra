@@ -16,8 +16,6 @@ An Electron app with a multi-process architecture:
 - **Main Process**: Handles state management (Redux), business logic, and coordination with butler/itch-setup. Uses a "reactor" pattern to handle side effects from Redux actions.
 - **Renderer Process**: React-based UI with state synchronized from the main process via electron-redux.
 
-#
-
 ## License
 
 itch is released under the MIT License, see the [LICENSE][] file for details.
